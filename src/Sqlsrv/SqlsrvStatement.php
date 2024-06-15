@@ -202,7 +202,14 @@ class SqlsrvStatement implements StatementInterface
                         $literal .= substr($substring, 0, $match[1]);
                     }
 
-                    $mapping[$match[0]]     = \count($mapping);
+                    if (isset($mapping[$match[0]])) {
+                        $mapping[$match[0]] = is_array($mapping[$match[0]]) ? $mapping[$match[0]] : [$mapping[$match[0]]];
+                        $mapping[$match[0]][] = \count($mapping);
+
+                    } else {
+                        $mapping[$match[0]] = \count($mapping);
+                    }
+
                     $endOfPlaceholder       = $match[1] + strlen($match[0]);
                     $beginOfNextPlaceholder = $matches[0][$i + 1][1] ?? strlen($substring);
                     $beginOfNextPlaceholder -= $endOfPlaceholder;
@@ -484,7 +491,15 @@ class SqlsrvStatement implements StatementInterface
             }
 
             if (isset($this->parameterKeyMapping[$key])) {
-                $params[$this->parameterKeyMapping[$key]] = $variable;
+                $paramKey = $this->parameterKeyMapping[$key];
+
+                if (is_scalar($this->parameterKeyMapping[$key])) {
+                    $params[$paramKey] = $variable;
+                } else {
+                    foreach ($paramKey as $currentKey) {
+                        $params[$currentKey] = $variable;
+                    }
+                }
             } else {
                 $params[] = $variable;
             }

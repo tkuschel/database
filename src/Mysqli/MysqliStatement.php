@@ -197,8 +197,14 @@ class MysqliStatement implements StatementInterface
                         $literal .= substr($substring, 0, $match[1]);
                     }
 
-                    $mapping[$match[0]]     = \count($mapping);
-                    $endOfPlaceholder       = $match[1] + strlen($match[0]);
+                    if (isset($mapping[$match[0]])) {
+                        $mapping[$match[0]] = is_array($mapping[$match[0]]) ? $mapping[$match[0]] : [$mapping[$match[0]]];
+                        $mapping[$match[0]][] = \count($mapping);
+
+                    } else {
+                        $mapping[$match[0]] = \count($mapping);
+                    }
+                    $endOfPlaceholder = $match[1] + strlen($match[0]);
                     $beginOfNextPlaceholder = $matches[0][$i + 1][1] ?? strlen($substring);
                     $beginOfNextPlaceholder -= $endOfPlaceholder;
                     $literal .= '?' . substr($substring, $endOfPlaceholder, $beginOfNextPlaceholder);
@@ -371,8 +377,17 @@ class MysqliStatement implements StatementInterface
 
             if (!empty($this->parameterKeyMapping)) {
                 foreach ($this->bindedValues as $key => &$value) {
-                    $params[$this->parameterKeyMapping[$key]] =& $value;
-                    $types[$this->parameterKeyMapping[$key]]  = $this->typesKeyMapping[$key];
+                    $paramKey = $this->parameterKeyMapping[$key];
+
+                    if (is_scalar($this->parameterKeyMapping[$key])) {
+                        $params[$paramKey] =& $value;
+                        $types[$paramKey]  = $this->typesKeyMapping[$key];
+                    } else {
+                        foreach ($paramKey as $currentKey) {
+                            $params[$currentKey] =& $value;
+                            $types[$currentKey]  = $this->typesKeyMapping[$key];
+                        }
+                    }
                 }
             } else {
                 foreach ($this->bindedValues as $key => &$value) {
