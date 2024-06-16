@@ -10,6 +10,9 @@ use Joomla\Database\DatabaseDriver;
 use Joomla\Database\Exception\ExecutionFailureException;
 use Joomla\Test\DatabaseTestCase;
 
+/**
+ * Test class for Joomla\Database\Pgsql\PgsqlStatement
+ */
 class PgsqlPreparedStatementTest extends DatabaseTestCase
 {
     /**
@@ -19,14 +22,11 @@ class PgsqlPreparedStatementTest extends DatabaseTestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $manager = static::getDatabaseManager();
+        parent::setUpBeforeClass();
 
-        $connection = $manager->getConnection();
-        $manager->dropDatabase();
-        $manager->createDatabase();
-        $connection->select($manager->getDbName());
-
-        static::$connection = $connection;
+        if (!static::$connection || static::$connection->getName() !== 'pgsql') {
+            self::markTestSkipped('PostgreSQL database not configured.');
+        }
     }
 
     /**
