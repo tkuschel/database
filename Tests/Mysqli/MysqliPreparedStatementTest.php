@@ -116,8 +116,8 @@ class MysqliPreparedStatementTest extends DatabaseTestCase
 
         $this->assertEquals(
             [
-                ':search' => 0,
-                ':search2' => 1,
+                ':search' => [0],
+                ':search2' => [1],
             ],
             $parameterKeyMapping
         );
