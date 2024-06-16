@@ -203,7 +203,7 @@ class SqlsrvStatement implements StatementInterface
                     }
 
                     if (!isset($mapping[$match[0]])) {
-                        $mapping[$match[0]][] = [];
+                        $mapping[$match[0]] = [];
                     }
 
                     $mapping[$match[0]][]   = $position++;
