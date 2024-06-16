@@ -197,7 +197,7 @@ class MysqliStatement implements StatementInterface
                         $literal .= substr($substring, 0, $match[1]);
                     }
 
-                    if (isset($mapping[$match[0]])) {
+                    if (!isset($mapping[$match[0]])) {
                         $mapping[$match[0]][] = [];
                     }
 
