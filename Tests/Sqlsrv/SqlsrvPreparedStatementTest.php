@@ -11,6 +11,9 @@ use Joomla\Database\Exception\ExecutionFailureException;
 use Joomla\Database\Sqlsrv\SqlsrvStatement;
 use Joomla\Test\DatabaseTestCase;
 
+/**
+ * Test class for Joomla\Database\Sqlsrv\SqlsrvStatement
+ */
 class SqlsrvPreparedStatementTest extends DatabaseTestCase
 {
     /**
@@ -20,14 +23,11 @@ class SqlsrvPreparedStatementTest extends DatabaseTestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $manager = static::getDatabaseManager();
+        parent::setUpBeforeClass();
 
-        $connection = $manager->getConnection();
-        $manager->dropDatabase();
-        $manager->createDatabase();
-        $connection->select($manager->getDbName());
-
-        static::$connection = $connection;
+        if (!static::$connection || static::$connection->getName() !== 'sqlsrv') {
+            self::markTestSkipped('SQL Server database not configured.');
+        }
     }
 
     /**
@@ -49,7 +49,7 @@ class SqlsrvPreparedStatementTest extends DatabaseTestCase
         } catch (ExecutionFailureException $exception) {
             $this->markTestSkipped(
                 \sprintf(
-                    'Could not load MS SQL Server database: %s',
+                    'Could not load SQL Server database: %s',
                     $exception->getMessage()
                 )
             );
