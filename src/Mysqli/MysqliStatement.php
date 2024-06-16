@@ -158,7 +158,7 @@ class MysqliStatement implements StatementInterface
         $quoteChar  = '';
         $literal    = '';
         $mapping    = [];
-        $replace    = [];
+        $position   = 0;
         $matches    = [];
         $pattern    = '/([:][a-zA-Z0-9_]+)/';
 
@@ -198,15 +198,14 @@ class MysqliStatement implements StatementInterface
                     }
 
                     if (isset($mapping[$match[0]])) {
-                        $mapping[$match[0]] = is_array($mapping[$match[0]]) ? $mapping[$match[0]] : [$mapping[$match[0]]];
-                        $mapping[$match[0]][] = \count($mapping);
-                    } else {
-                        $mapping[$match[0]] = \count($mapping);
+                        $mapping[$match[0]][] = [];
                     }
-                    $endOfPlaceholder = $match[1] + strlen($match[0]);
+
+                    $mapping[$match[0]][]   = $position++;
+                    $endOfPlaceholder       = $match[1] + strlen($match[0]);
                     $beginOfNextPlaceholder = $matches[0][$i + 1][1] ?? strlen($substring);
                     $beginOfNextPlaceholder -= $endOfPlaceholder;
-                    $literal .= '?' . substr($substring, $endOfPlaceholder, $beginOfNextPlaceholder);
+                    $literal                .= '?' . substr($substring, $endOfPlaceholder, $beginOfNextPlaceholder);
                 }
             } else {
                 $literal .= $substring;
@@ -378,14 +377,9 @@ class MysqliStatement implements StatementInterface
                 foreach ($this->bindedValues as $key => &$value) {
                     $paramKey = $this->parameterKeyMapping[$key];
 
-                    if (is_scalar($this->parameterKeyMapping[$key])) {
-                        $params[$paramKey] =& $value;
-                        $types[$paramKey]  = $this->typesKeyMapping[$key];
-                    } else {
-                        foreach ($paramKey as $currentKey) {
-                            $params[$currentKey] =& $value;
-                            $types[$currentKey]  = $this->typesKeyMapping[$key];
-                        }
+                    foreach ($paramKey as $currentKey) {
+                        $params[$currentKey] =& $value;
+                        $types[$currentKey]  = $this->typesKeyMapping[$key];
                     }
                 }
             } else {
