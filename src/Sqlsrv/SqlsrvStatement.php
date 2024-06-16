@@ -205,7 +205,6 @@ class SqlsrvStatement implements StatementInterface
                     if (isset($mapping[$match[0]])) {
                         $mapping[$match[0]] = is_array($mapping[$match[0]]) ? $mapping[$match[0]] : [$mapping[$match[0]]];
                         $mapping[$match[0]][] = \count($mapping);
-
                     } else {
                         $mapping[$match[0]] = \count($mapping);
                     }
