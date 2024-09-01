@@ -1897,9 +1897,9 @@ abstract class DatabaseDriver implements DatabaseInterface, DispatcherAwareInter
     /**
      * Extract pure host name (or IP address) and port or socket from host name option.
      *
-     * @param   integer  $defaultPort   The default port number to be used if no port is given.
+     * @param  integer  $defaultPort  The default port number to be used if no port is given.
      *
-     * @since   __DEPLOY_VERSION__
+     * @since  __DEPLOY_VERSION__
      */
     protected function setHostPortSocket($defaultPort)
     {
