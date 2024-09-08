@@ -48,6 +48,16 @@ interface DatabaseInterface
      */
     public function createDatabase($options, $utf = true);
 
+     /**
+     * Create a new QueryInterface object.
+     *
+     * @return  QueryInterface
+     *
+     * @since   3.0
+     * @throws  \RuntimeException
+     */
+    public function createQuery();
+
     /**
      * Replace special placeholder representing binary field with the original string.
      *
@@ -232,9 +242,10 @@ interface DatabaseInterface
     public function getNumRows();
 
     /**
-     * Get the current query object or a new QueryInterface object.
+     * Get the current query object. (Deprecated: Or a new QueryInterface object).
      *
-     * @param   boolean  $new  False to return the current query object, True to return a new QueryInterface object.
+     * @param   boolean  $new  False to return the current query object,{@deprecated 3.0 Use DatabaseInterface::getQuery() instead}
+     *                         True to return a new QueryInterface object.{@deprecated 3.0 Use DatabaseInterface::createQuery() instead}
      *
      * @return  QueryInterface
      *

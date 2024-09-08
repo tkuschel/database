@@ -988,10 +988,12 @@ abstract class DatabaseDriver implements DatabaseInterface, DispatcherAwareInter
     public function getQuery($new = false)
     {
         if ($new) {
+            $key = array_search(__FUNCTION__, array_column(debug_backtrace(), 'function'));
+            $btfile = 'Found in: ' . debug_backtrace()[$key]['file'] . ':' . debug_backtrace()[$key]['line'];
             trigger_deprecation(
                 'joomla/database',
                 '2.2.0',
-                'The parameter $new is deprecated and will be removed in 4.0, use %s::createQuery() instead.',
+                __FUNCTION__ . " with a \$new (true) parameter is deprecated and will be removed in 4.0, use %s::createQuery() instead. $btfile",
                 self::class
             );
 
@@ -1748,7 +1750,7 @@ abstract class DatabaseDriver implements DatabaseInterface, DispatcherAwareInter
 
         if (\is_string($query)) {
             // Allows taking advantage of bound variables in a direct query:
-            $query = $this->getQuery(true)->setQuery($query);
+            $query = $this->createQuery()->setQuery($query);
         } elseif (!($query instanceof QueryInterface)) {
             throw new \InvalidArgumentException(
                 sprintf(
